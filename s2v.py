@@ -12,7 +12,7 @@ class J2V:
     dictionary_type: (str) ./token_dictionary
     max_len: (int)
     '''
-    def __init__(self, dictionary_type, max_len):
+    def __init__(self, dictionary_type, max_len, length):
         if dictionary_type == 'alphabet':
             self.dictionary = alphabet.alphabet_dict
         elif dictionary_type == 'katakana':
@@ -21,6 +21,7 @@ class J2V:
             self.dictionary = katakana_small.katakana_small_dict
         self.dictionary_type = dictionary_type
         self.max_len = max_len
+        self.length = length
         kakasi = pykakasi.kakasi()
         kakasi.setMode('H', 'a')
         kakasi.setMode('K', 'a')
@@ -43,7 +44,11 @@ class J2V:
     '''
     def __encode_sentence(self, sentence):
 
-        return [ char for char in self.__tokenize(sentence) ]
+        tokenized_sentence = [ char for char in self.__tokenize(sentence) ]
+        while len(tokenized_sentence) < self.length:
+            tokenized_sentence.append([0]*len(self.dictionary))
+        
+        return tokenized_sentence
 
     '''
     input: '日本語の文章'
@@ -51,7 +56,7 @@ class J2V:
     '''
     def __tokenize(self, sentence):
 
-        return [ self.__encode_char(char) for char in self.kakasi_conv.do(sentence) ]
+        return [ self.__encode_char(char) for char in self.kakasi_conv.do(sentence) ][:self.max_len]
 
     '''
     input: '日'
@@ -70,5 +75,5 @@ class J2V:
 
 
 if __name__ == '__main__':
-    j2v = J2V('alphabet', 1000)
+    j2v = J2V('alphabet', max_len=1000, length=1024)
     r = j2v.encode_sentences(['日本', 'America'])
