@@ -72,7 +72,3 @@ class J2V:
 if __name__ == '__main__':
     j2v = J2V('alphabet', 1000)
     r = j2v.encode_sentences(['日本', 'America'])
-    for x in r:
-        print('--')
-        for y in x:
-            print(y)
