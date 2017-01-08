@@ -3,6 +3,7 @@ Japanese to one-hot vector encoder
 '''
 import pykakasi.kakasi
 from pprint import pprint
+import numpy as np
 
 from token_dictionary import alphabet, katakana, katakana_small
 
@@ -12,7 +13,7 @@ class J2V:
     dictionary_type: (str) ./token_dictionary
     max_len: (int)
     '''
-    def __init__(self, dictionary_type, max_len, length):
+    def __init__(self, dictionary_type='alphabet', max_len=1000, length=1024):
         if dictionary_type == 'alphabet':
             self.dictionary = alphabet.alphabet_dict
         elif dictionary_type == 'katakana':
@@ -77,3 +78,5 @@ class J2V:
 if __name__ == '__main__':
     j2v = J2V('alphabet', max_len=1000, length=1024)
     r = j2v.encode_sentences(['日本', 'America'])
+    print(len(r[0]))
+    print(len(r[0][0]))
