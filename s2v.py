@@ -1,9 +1,10 @@
 '''
-Japanese to one-hot vector encoder
+Japanese to char-level one-hot vector encoder
 '''
+
 import pykakasi.kakasi
-from pprint import pprint
 import numpy as np
+import MeCab
 
 from token_dictionary import alphabet, katakana, katakana_small
 
@@ -57,13 +58,17 @@ class J2V:
     '''
     def __tokenize(self, sentence):
 
-        return [ self.__encode_char(char) for char in self.kakasi_conv.do(sentence) ][:self.max_len]
+        if self.dictionary_type == 'alphabet':
+            return [ self.__encode_char(char) for char in self.kakasi_conv.do(sentence) ][:self.max_len]
+        elif self.dictionary_type in ['katakana', 'katakana_small']:
+            return [ self.__encode_char(char) for char in sentence ][:self.max_len]
 
     '''
     input: '日'
     output: '[0,1,..]'  OR [zeros] if doesn't exist in dictionary
     '''
     def __encode_char(self, char):
+
         char_vec = [0] * len(self.dictionary)
         try:
             token_id = self.dictionary[char.lower()]
@@ -71,12 +76,11 @@ class J2V:
         except KeyError:
             return char_vec
 
-
         return  char_vec
 
 
 if __name__ == '__main__':
-    j2v = J2V('alphabet', max_len=1000, length=1024)
+    j2v = J2V('katakana_small', max_len=1000, length=1024)
     r = j2v.encode_sentences(['日本', 'America'])
     print(len(r[0]))
     print(len(r[0][0]))
